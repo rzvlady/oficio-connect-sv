@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.db.models import Avg
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -20,6 +20,41 @@ class WorkerProfile(models.Model):
     service_area = models.CharField(max_length=100, default="San Salvador")
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
 
+    def total_reviews(self):
+        return self.reviews.count()
+
+    def get_average_rating(self):
+        result = self.reviews.aggregate(Avg('rating', default = 0))['rating__avg']
+        return round(result, 2)  
+    #retorna el resultado redondeado a un decimal
+        """el uso de "__" es parte de la convencion de nombres de django, se hace para no confundir con variables propias
+        si estuviera sumando usaria algo__sum. aggregate retorna un diccionaro, por eso se usa  ['rating__avg']
+        Es como si el nombre se asignara sobre la marcha. ['rating__avg'] es la key y lo que round(result, 1) el value"""
+
+    def get_stars_number(self):
+        rating = self.get_average_rating()
+        full_stars = int(rating)
+        stars_decimal_part = rating - full_stars
+        half_star = 0
+
+        if stars_decimal_part >= 0.75:
+            full_stars +=1
+
+        elif stars_decimal_part >= 0.25:
+            half_star = 1
+
+        elif stars_decimal_part < 0.25:
+            half_star = 0
+        empty_stars = 5 - (full_stars + half_star)
+
+        return {
+            'full_stars': range(full_stars),
+            'half_stars': range(half_star),
+            'empty_stars': range(empty_stars)
+        }
+        """esta funcion permie que ne el front se puedan mostrar graficamente
+          calificaciones como '3 estrellas y la mitad de una' o sea, (3.5 estrellas o )"""
+
     def __str__(self):
         return f"{self.full_name} - {self.category.name}"
     
@@ -29,9 +64,14 @@ class Review(models.Model):
     rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)])
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-
+    """def not_self_review(self):
+        if self.client == self.worker.user:
+            raise ValidationError("No puede calificarse a si mismo")""" #no funciona, tiene k ser de otra manera, con clear y save creo
+    
     class Meta:
         unique_together = ("worker", "client")
 
     def __str__(self):
         return f"Review de {self.worker.full_name} por {self.client.username}"
+
+ # nombre_columna = models.TipoDeDato(configuraciones, validaciones, relaciones)
