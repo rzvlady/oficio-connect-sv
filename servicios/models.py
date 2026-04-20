@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Avg
+from django.core.exceptions import ValidationError
+
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -26,7 +28,7 @@ class WorkerProfile(models.Model):
     def get_average_rating(self):
         result = self.reviews.aggregate(Avg('rating', default = 0))['rating__avg']
         return round(result, 2)  
-    #retorna el resultado redondeado a un decimal
+    #retorna el resultado redondeado dos decimales
         """el uso de "__" es parte de la convencion de nombres de django, se hace para no confundir con variables propias
         si estuviera sumando usaria algo__sum. aggregate retorna un diccionaro, por eso se usa  ['rating__avg']
         Es como si el nombre se asignara sobre la marcha. ['rating__avg'] es la key y lo que round(result, 1) el value"""
@@ -64,10 +66,14 @@ class Review(models.Model):
     rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)])
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    """def not_self_review(self):
-        if self.client == self.worker.user:
-            raise ValidationError("No puede calificarse a si mismo")""" #no funciona, tiene k ser de otra manera, con clear y save creo
-    
+
+    def clean(self):
+        if self.worker.user == self.client:  
+            raise ValidationError("No puede calificarse a sí mismo")
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     class Meta:
         unique_together = ("worker", "client")
 
