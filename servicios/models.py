@@ -60,16 +60,37 @@ class WorkerProfile(models.Model):
     def __str__(self):
         return f"{self.full_name} - {self.category.name}"
     
+class ClientProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client_profile")
+    full_name = models.CharField(max_length=250)
+    phone_number = models.CharField(max_length=15)
+    address = models.CharField(max_length=255, help_text="Dirección para recibir el servicio")
+    municipality = models.CharField(max_length=100, default="San Salvador", verbose_name="Municipio") #quitar eso total es solo en el AMSS
+    profile_picture = models.ImageField(upload_to='clients/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Cliente: {self.full_name}"
+    
 class Review(models.Model):
     worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name="reviews")
-    client = models.ForeignKey(User, on_delete=models.CASCADE)
+    client = models.ForeignKey(ClientProfile, on_delete=models.CASCADE)
     rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)])
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
-        if self.worker.user == self.client:  
+        if self.worker.user == self.client.user:  
             raise ValidationError("No puede calificarse a sí mismo")
+        
+        has_completed_job = JobRequest.objects.filter(
+            client=self.client, 
+            worker=self.worker, 
+            status='COMPLETED'
+        ).exists()
+        if not has_completed_job:
+            raise ValidationError("Debes completar un trabajo con este profesional antes de calificarlo.")
+        
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
@@ -78,6 +99,22 @@ class Review(models.Model):
         unique_together = ("worker", "client")
 
     def __str__(self):
-        return f"Review de {self.worker.full_name} por {self.client.username}"
+        return f"Review de {self.worker.full_name} por {self.client.full_name}"
 
+class JobRequest(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pendiente'),
+        ('ACCEPTED', 'Aceptado'),
+        ('COMPLETED', 'Completado'),
+        ('CANCELLED', 'Cancelado'),
+    ]
+    client = models.ForeignKey(ClientProfile, on_delete=models.CASCADE)
+    worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE)
+    description = models.TextField(help_text="¿Qué necesita que el trabajador haga?")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Servicio de {self.worker.full_name} para {self.client.full_name}"
+    
  # nombre_columna = models.TipoDeDato(configuraciones, validaciones, relaciones)
