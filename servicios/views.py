@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from .models import WorkerProfile, ClientProfile, Review, JobRequest
 from .forms import ReviewForm
-
+from django.contrib import messages
 @login_required
 def crear_resena(request, worker_id):
     trabajador = get_object_or_404(WorkerProfile, id=worker_id)
@@ -29,8 +29,8 @@ def crear_resena(request, worker_id):
 
         if form.is_valid():
             try:
-            # 2. Guardamos directamente. Al ser ModelForm, él ya sabe qué hacer.
                 form.save() 
+                messages.success(request, "¡Gracias! Tu reseña ha sido publicada con éxito.")
                 return redirect('perfil_trabajador', worker_id=trabajador.id)
             except ValidationError:
                 form.add_error(None, "Ya has calificado a este trabajador anteriormente.")
