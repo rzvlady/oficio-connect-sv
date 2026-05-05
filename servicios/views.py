@@ -71,7 +71,7 @@ def eliminar_categoria(request, id):
 #trabajadores
 def lista_workers(request):
     workers = WorkerProfile.objects.all()
-    return render(request, "servicios/perfil_trabajador.html", {"workers":workers})
+    return render(request, "perfil_trabajador.html", {"workers":workers})
 
 def crear_worker(request):
     form = WorkerProfileForm(request.POST or None)
