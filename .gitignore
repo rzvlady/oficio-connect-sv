@@ -13,3 +13,5 @@ __pycache__/
 # Configuration files for vscode and other IDEs
 .vscode/
 .idea/
+
+db.sqlite3
