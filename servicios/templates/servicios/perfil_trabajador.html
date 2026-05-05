@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Trabajador - Oficio Connect SV</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                
+                <h2>Perfil de {{ worker.full_name }}</h2>
+
+                <div class="card p-4 mt-4 shadow-sm">
+                    {% if existe_trabajo %}
+                        <h4 class="mb-4">Califica el servicio recibido</h4>
+                        
+                        {% if form.errors %}
+                            <div class="alert alert-danger shadow-sm">
+                                <ul class="mb-0">
+                                    {% for field in form %}
+                                        {% for error in field.errors %}
+                                            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% for error in form.non_field_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        
+                        {% if error_mensaje %}
+                            <div class="alert alert-warning">
+                                {{ error_mensaje }}
+                            </div>
+                        {% endif %}
+
+                        <form method="POST">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label class="form-label">¿Cuántas estrellas le das?</label>
+                                {{ form.rating }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Tu comentario:</label>
+                                {{ form.comment }}
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-2">Publicar Reseña</button>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-info border-0 shadow-sm">
+                            <h5 class="alert-heading">¡Atención!</h5>
+                            <p class="mb-0">Para asegurar la transparencia en El Salvador, solo puedes calificar servicios que ya hayan sido marcados como <strong>"Completados"</strong>.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

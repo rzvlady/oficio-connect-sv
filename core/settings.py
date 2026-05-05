@@ -37,11 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< HEAD
-=======
     'debug_toolbar',
->>>>>>> 4652a50b103d6ce8175cfdc1caa6871e08e339f7
     'servicios',
+    'usuarios',
 ]
 
 MIDDLEWARE = [
@@ -67,7 +65,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'usuarios' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
