@@ -1,5 +1,5 @@
 from django import forms
-from .models import Review
+from .models import Review, Category, WorkerProfile
 
 class ReviewForm(forms.ModelForm):
     class Meta:
@@ -13,3 +13,13 @@ class ReviewForm(forms.ModelForm):
                 'rows': 3
             }),
         }   
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+class WorkerProfileForm(forms.ModelForm):
+    class Meta:
+        model = WorkerProfile
+        fields = '__all__'
