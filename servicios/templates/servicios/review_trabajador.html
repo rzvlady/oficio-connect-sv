@@ -21,15 +21,10 @@
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                {% for worker in workers %}
-               <div class="card p-4 mt-4 shadow-sm">
+                
                 <h2>Perfil de {{ worker.full_name }}</h2>
 
-                <div class= "mb-3">
-                    <a href="{% url 'editar_worker' worker.id %}" class = "btn btn-warning">Editar Perfil</a>
-                    <a href="{% url 'eliminar_worker' worker.id %}" class = "btn btn-danger">Eliminar Perfil</a>
-                </div>
-
+                <div class="card p-4 mt-4 shadow-sm">
                     {% if existe_trabajo %}
                         <h4 class="mb-4">Califica el servicio recibido</h4>
                         
@@ -43,7 +38,6 @@
                                     {% endfor %}
                                     {% for error in form.non_field_errors %}
                                         <li>{{ error }}</li>
-                                </div>
                                     {% endfor %}
                                 </ul>
                             </div>
@@ -81,6 +75,6 @@
             </div>
         </div>
     </div>
-    {% endfor %}
+
 </body>
 </html>

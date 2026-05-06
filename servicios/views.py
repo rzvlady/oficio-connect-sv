@@ -42,18 +42,18 @@ def crear_resena(request, worker_id):
         'existe_trabajo': tiene_trabajo 
     })
 
-#category 
 
-def lista_categorias(request):
+#todo el codigo de debajo funciona, pero da acceso a usuarios para eliminar datos importantes. Debe de cambiarse
+"""def lista_categorias(request):
     categorias = Category.objects.all()
-    return render(request, "lista_categorias.html", {"categorias":categorias})
+    return render(request, "servicios/lista_categorias.html", {"categorias":categorias})
 
 def crear_categoria(request):
     form = CategoryForm(request.POST or None)
     if form.is_valid():
         form.save()
         return redirect("lista_categorias")
-    return render(request, "crear_categoria.html",{"form":form})
+    return render(request, "servicios/crear_categoria.html",{"form":form})
 
 def editar_categoria(request,id):
     categoria = Category.objects.get(id=id)
@@ -61,7 +61,7 @@ def editar_categoria(request,id):
     if form.is_valid():
         form.save()
         return redirect("lista_categorias")
-    return render(request, "editar_categorias.html",{"form":form})
+    return render(request, "servicios/editar_categorias.html",{"form":form})
 
 def eliminar_categoria(request, id):
     categoria = Category.objects.get(id=id)
@@ -91,10 +91,7 @@ def editar_worker(request,id):
 def eliminar_worker(request, id):
     worker = WorkerProfile.objects.get(id=id)
     worker.delete()
-    return redirect("lista_workers")
+    return redirect("lista_workers")"""
 
-def login_view(request):
-    return render(request, 'usuarios/login.html')
 
-def register_view(request):
-    return render(request, 'usuarios/register.html')
+
