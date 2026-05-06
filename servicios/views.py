@@ -19,7 +19,7 @@ def crear_resena(request, worker_id):
 
     if request.method == 'POST':
         if not tiene_trabajo:
-            return render(request, 'servicios/perfil_trabajador.html', {
+            return render(request, 'servicios/review_trabajador.html', {
                 'worker': trabajador,
                 'error_mensaje': "No puedes calificar sin un trabajo completado.",
                 'form': form,
@@ -31,12 +31,12 @@ def crear_resena(request, worker_id):
             try:
                 form.save() 
                 messages.success(request, "¡Gracias! Tu reseña ha sido publicada con éxito.")
-                return redirect('perfil_trabajador', worker_id=trabajador.id)
+                return redirect('review_trabajador', worker_id=trabajador.id)
             except ValidationError:
                 form.add_error(None, "Ya has calificado a este trabajador anteriormente.")
             else:
                 pass
-    return render(request, 'servicios/perfil_trabajador.html', {
+    return render(request, 'servicios/review_trabajador.html', {
         'worker': trabajador,
         'form': form,
         'existe_trabajo': tiene_trabajo 
