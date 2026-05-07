@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from .models import Category, WorkerProfile, ClientProfile, Review, JobRequest
-from .forms import ReviewForm, CategoryForm, WorkerProfileForm
+from .models import Category, WorkerProfile, ClientProfile, Review, JobRequest  
+from .forms import ReviewForm
 from django.contrib import messages
+
+
 @login_required
 def crear_resena(request, worker_id):
     trabajador = get_object_or_404(WorkerProfile, id=worker_id)
