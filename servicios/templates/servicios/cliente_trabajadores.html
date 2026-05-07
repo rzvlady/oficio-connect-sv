@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Especialistas en {{ categoria.nombre }} - Oficio Connect SV</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <a href="{% url 'explorar_categorias' %}" class="btn btn-sm btn-secondary mb-4">&larr; Volver a categorías</a>
+        
+        <h2 class="mb-4">Especialistas en: <span class="text-primary">{{ categoria.nombre }}</span></h2>
+        
+        <div class="row">
+            {% for trabajador in trabajadores %}
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="card-title">{{ trabajador.full_name }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ trabajador.category.nombre }}</h6>
+                            </div>
+                            <span class="badge bg-warning text-dark">⭐ Nuevo</span>
+                        </div>
+                        
+                        <p class="card-text mt-3">
+                            {{ trabajador.bio|default:"Este especialista aún no ha agregado una biografía a su perfil." }}
+                        </p>
+                        
+                        <hr>
+                        <a href="#" class="btn btn-success w-100">Contactar</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <h4 class="text-muted">Lo sentimos</h4>
+                <p>Aún no hay trabajadores registrados en esta categoría de oficios.</p>
+            </div>
+            {% endfor %}
+            </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

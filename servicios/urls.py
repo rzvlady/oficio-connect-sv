@@ -4,6 +4,11 @@ from . import views
 urlpatterns = [
     path('review_trabajador/<int:worker_id>/', views.crear_resena, name='review_trabajador'), 
 
+    path('explorar/', views.lista_categorias_cliente, name='explorar_categorias'),
+
+    path('explorar/<int:categoria_id>/', views.trabajadores_por_categoria, name='trabajadores_categoria'),
+
+
     #path('categorias/', views.lista_categorias, name='lista_categorias'),
 
     #path('categorias/crear/', views.crear_categoria, name = 'crear_categoria'), 

@@ -42,6 +42,20 @@ def crear_resena(request, worker_id):
         'existe_trabajo': tiene_trabajo 
     })
 
+def lista_categorias_cliente(request):
+    categorias = Category.objects.all()
+    return render(request, 'servicios/cliente_categorias.html', {'categorias': categorias})
+
+def trabajadores_por_categoria(request, categoria_id):
+    categoria = get_object_or_404(Category, id=categoria_id)
+    trabajadores = WorkerProfile.objects.filter(category=categoria)
+    
+    return render(request, 'servicios/cliente_trabajadores.html', {
+        'categoria': categoria,
+        'trabajadores': trabajadores
+    })
+
+
 
 #todo el codigo de debajo funciona, pero da acceso a usuarios para eliminar datos importantes. Debe de cambiarse
 """def lista_categorias(request):
