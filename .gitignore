@@ -15,3 +15,6 @@ __pycache__/
 .idea/
 
 db.sqlite3
+
+# Ignorar archivos (media) subidos por usuarios
+media/

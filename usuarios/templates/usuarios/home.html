@@ -45,8 +45,8 @@
 
                 <div class="card welcome-card shadow-lg p-4 mb-5 text-center">
                     <div class="card-body">
-                        <h1 class="display-4 fw-bold">¡Bienvenido de nuevo!</h1>
-                        <p class="lead">Has iniciado sesión correctamente en la plataforma líder de servicios en El Salvador.</p>
+                        <h1 class="display-4 fw-bold">¡Bienvenido!</h1>
+                        <p class="lead">Has iniciado sesión correctamente.</p>
                         <hr class="my-4 border-light opacity-25">
                         <p>¿Qué te gustaría hacer hoy?</p>
                     </div>
@@ -86,7 +86,13 @@
                             <div class="card-body">
                                 <h5 class="card-title">Configuración</h5>
                                 <p class="card-text text-muted">Ajusta los detalles de tu cuenta personal.</p>
-                                <button class="btn btn-outline-secondary" disabled>Próximamente</button>
+                                {% if user.client_profile %}
+                                    <a href="{% url 'completar_perfil_cliente' %}" class="btn btn-outline-primary">Editar mi perfil</a>
+                            {% elif user.workerprofile %}
+                                    <a href="#" class="btn btn-outline-secondary disabled">Editar perfil (Trabajador)</a>
+                            {% else %}
+                                <button class="btn btn-outline-secondary" disabled>Perfil no disponible</button>
+                            {% endif %}
                             </div>
                         </div>
                     </div>

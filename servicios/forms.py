@@ -1,5 +1,5 @@
 from django import forms
-from .models import Review, Category, WorkerProfile
+from .models import Review, Category, WorkerProfile, ClientProfile
 
 class ReviewForm(forms.ModelForm):
     class Meta:
