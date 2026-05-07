@@ -14,10 +14,10 @@ class Category(models.Model):
 
 class WorkerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=250)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="workers")
-    bio = models.TextField(help_text="Breve descripción de su experiencia en el trabajo")
-    phone_number = models.CharField(max_length=15)
+    full_name = models.CharField(max_length=250, null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, related_name="workers", null=True, blank=True)
+    bio = models.TextField(help_text="Breve descripción de su experiencia en el trabajo", null=True, blank=True)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
     service_area = models.CharField(max_length=100, default="San Salvador")
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
 
@@ -54,21 +54,31 @@ class WorkerProfile(models.Model):
             'empty_stars': range(empty_stars)
         }
         """esta funcion permie que ne el front se puedan mostrar graficamente
-          calificaciones como '3 estrellas y la mitad de una' o sea, (3.5 estrellas o )"""
+        calificaciones como '3 estrellas y la mitad de una' o sea, (3.5 estrellas o )"""
 
-    def __str__(self):
-        return f"{self.full_name} - {self.category.name}"
+def __str__(self):
+        # 1. Definimos qué nombre mostrar
+        nombre = self.full_name if self.full_name else self.user.username
+        
+        # 2. Verificamos si tiene categoría antes de intentar sacar el '.name'
+        if self.category:
+            return f"{nombre} - {self.category.name}"
+        
+        # 3. Si no tiene categoría, mostramos un mensaje por defecto
+        return f"{nombre} - Sin categoría asignada"
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client_profile")
-    full_name = models.CharField(max_length=250)
-    phone_number = models.CharField(max_length=15)
-    address = models.CharField(max_length=255, help_text="Dirección para recibir el servicio")
+    full_name = models.CharField(max_length=250, null=True, blank=True)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
+    address = models.CharField(max_length=255, help_text="Dirección para recibir el servicio", null=True, blank=True)
     municipality = models.CharField(max_length=100, default="San Salvador", verbose_name="Municipio") #quitar eso total es solo en el AMSS
     profile_picture = models.ImageField(upload_to='clients/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Cliente: {self.full_name}"    
+        if self.full_name:
+            return f"Cliente: {self.full_name}"
+        return f"Cliente: {self.user.username}"
 class Review(models.Model):
     worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name="reviews")
     client = models.ForeignKey(ClientProfile, on_delete=models.CASCADE)
