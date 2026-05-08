@@ -68,8 +68,6 @@ def detalle_trabajador(request, trabajador_id):
     }
     return render(request, 'servicios/detalle_trabajador.html', context)
 
-
-
 def lista_categorias(request):
     categorias = Category.objects.all()
     return render(request, "servicios/lista_categorias.html", {"categorias":categorias})

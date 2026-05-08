@@ -26,14 +26,22 @@ def logout_view(request):
 
 @login_required(login_url='login')
 def home_view(request):
+    # Intentamos detectar el perfil del cliente
     if hasattr(request.user, 'client_profile'):
         template_name = 'usuarios/home_cliente.html'
-    elif hasattr(request.user, 'worker_profile'):
+    
+    # Intentamos detectar el perfil del trabajador 
+    # (Ojo: si no pusiste related_name, Django usa 'workerprofile')
+    elif hasattr(request.user, 'worker_profile') or hasattr(request.user, 'workerprofile'):
         template_name = 'usuarios/home_trabajador.html'
+    
     else:
+        # Si es un admin o usuario nuevo sin perfil
         template_name = 'usuarios/home.html'
 
     response = render(request, template_name)
+    
+    # Tus cabeceras de limpieza de caché
     response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
     response['Pragma'] = 'no-cache'
     return response
@@ -85,4 +93,4 @@ def completar_perfil_cliente(request):
         'nuevo_perfil': created 
     }
 
-    return render(request, 'usuarios/completar_perfil.html', context)
+    return render(request, 'usuarios/completar_perfil_cliente.html', context)
