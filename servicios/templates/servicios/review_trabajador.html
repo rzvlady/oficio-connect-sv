@@ -25,7 +25,7 @@
                 <h2>Perfil de {{ worker.full_name }}</h2>
 
                 <div class= "mb-3">
-                    {%if worker.user == request.user%}
+                    {% if worker.user == request.user %}
                     <a href="{% url 'editar_worker' worker.id %}" class = "btn btn-warning">Editar Perfil</a>
                     <a href="{% url 'eliminar_worker' worker.id %}" class = "btn btn-danger">Eliminar Perfil</a>
                 </div>
