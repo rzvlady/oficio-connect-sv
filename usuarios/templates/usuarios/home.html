@@ -75,7 +75,9 @@
 
 
                 {% comment %} Cambiar el # por la url de la vista para mostrar a los clientes la busqueda por perfiles {% endcomment %}
-                                <a href="#" class="btn btn-primary">Ver perfiles</a>
+                                <a href="{% url 'lista_workers' %}" class="btn btn-primary">Ver perfiles</a>
+                            </a>
+
 
 
                             </div>
@@ -83,17 +85,15 @@
                     </div>
                     <div class="col-md-4 mb-4">
                         <div class="card h-100 shadow-sm border-0">
-                            <div class="card-body">
+                            <div class="card-body text-center">
                                 <h5 class="card-title">Configuración</h5>
                                 <p class="card-text text-muted">Ajusta los detalles de tu cuenta personal.</p>
                                 {% if user.client_profile %}
                                     <a href="{% url 'completar_perfil_cliente' %}" class="btn btn-outline-primary">Editar mi perfil</a>
-                            {% elif user.workerprofile %}
-                                    <a href="#" class="btn btn-outline-secondary disabled">Editar perfil (Trabajador)</a>
-                            {% else %}
-                                <button class="btn btn-outline-secondary" disabled>Perfil no disponible</button>
-                            {% endif %}
-                            </div>
+                                        
+                                {% elif user.workerprofile %}
+                                    <a href="{% url 'completar_perfil_trabajador' %}" class="btn btn-primary">Editar mi información</a>
+                                {% endif %}  
                         </div>
                     </div>
                 </div>
