@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models import Avg
 from django.core.exceptions import ValidationError
@@ -13,7 +14,7 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
 class WorkerProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = "worker_profille")
     full_name = models.CharField(max_length=250, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, related_name="workers", null=True, blank=True)
     bio = models.TextField(help_text="Breve descripción de su experiencia en el trabajo", null=True, blank=True)
@@ -57,14 +58,11 @@ class WorkerProfile(models.Model):
         calificaciones como '3 estrellas y la mitad de una' o sea, (3.5 estrellas o )"""
 
 def __str__(self):
-        # 1. Definimos qué nombre mostrar
+
         nombre = self.full_name if self.full_name else self.user.username
-        
-        # 2. Verificamos si tiene categoría antes de intentar sacar el '.name'
         if self.category:
             return f"{nombre} - {self.category.name}"
         
-        # 3. Si no tiene categoría, mostramos un mensaje por defecto
         return f"{nombre} - Sin categoría asignada"
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client_profile")
@@ -108,6 +106,9 @@ class Review(models.Model):
     def __str__(self):
         return f"Review de {self.worker.full_name} por {self.client.full_name}"
 
+from django.db import models
+from django.utils import timezone
+
 class JobRequest(models.Model):
     STATUS_CHOICES = [
         ('PENDING', 'Pendiente'),
@@ -115,13 +116,17 @@ class JobRequest(models.Model):
         ('COMPLETED', 'Completado'),
         ('CANCELLED', 'Cancelado'),
     ]
-    client = models.ForeignKey(ClientProfile, on_delete=models.CASCADE)
-    worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE)
-    description = models.TextField(help_text="¿Qué necesita que el trabajador haga?")
+    client = models.ForeignKey('ClientProfile', on_delete=models.CASCADE, related_name='solicitudes_enviadas')
+    worker = models.ForeignKey('WorkerProfile', on_delete=models.CASCADE, related_name='trabajos_recibidos')
+    description = models.TextField(verbose_name="Descripción del trabajo", help_text="¿Qué necesita que el trabajador haga?")
+    address_reference = models.CharField(max_length=255, verbose_name="Referencia de ubicación",blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Servicio de {self.worker.full_name} para {self.client.full_name}"
+        # Usamos el username de la relación con User para el nombre en el admin
+        return f"Solicitud para {self.worker.user.username} de {self.client.user.username}"
 
- # nombre_columna = models.TipoDeDato(configuraciones, validaciones, relaciones)
+    class Meta:
+        verbose_name = "Solicitud de Trabajo"
+        verbose_name_plural = "Solicitudes de Trabajo"

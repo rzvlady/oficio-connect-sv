@@ -57,57 +57,12 @@ def trabajadores_por_categoria(request, categoria_id):
         'trabajadores': trabajadores
     })
 
-
-
-#todo el codigo de debajo funciona, pero da acceso a usuarios para eliminar datos importantes. Debe de cambiarse
-"""def lista_categorias(request):
-    categorias = Category.objects.all()
-    return render(request, "servicios/lista_categorias.html", {"categorias":categorias})
-
-def crear_categoria(request):
-    form = CategoryForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        return redirect("lista_categorias")
-    return render(request, "servicios/crear_categoria.html",{"form":form})
-
-def editar_categoria(request,id):
-    categoria = Category.objects.get(id=id)
-    form = CategoryForm(request.POST or None, instance=categoria)
-    if form.is_valid():
-        form.save()
-        return redirect("lista_categorias")
-    return render(request, "servicios/editar_categorias.html",{"form":form})
-
-def eliminar_categoria(request, id):
-    categoria = Category.objects.get(id=id)
-    categoria.delete()
-    return redirect("lista_categorias")
-
-#trabajadores
-def lista_workers(request):
-    workers = WorkerProfile.objects.all()
-    return render(request, "perfil_trabajador.html", {"workers":workers})
-
-def crear_worker(request):
-    form = WorkerProfileForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        return redirect("lista_workers")
-    return render(request, "servicios/crear_worker.html",{"form":form})
-
-def editar_worker(request,id):
-    worker = WorkerProfile.objects.get(id=id)
-    form = WorkerProfileForm(request.POST or None, instance=worker)
-    if form.is_valid():
-        form.save()
-        return redirect("lista_workers")
-    return render(request, "servicios/editar_worker.html",{"form":form})
-
-def eliminar_worker(request, id):
-    worker = WorkerProfile.objects.get(id=id)
-    worker.delete()
-    return redirect("lista_workers")"""
-
-
-
+@login_required(login_url='login')
+def detalle_trabajador(request, trabajador_id):
+    trabajador = get_object_or_404(WorkerProfile.objects.select_related('user'), id=trabajador_id)
+    resenas = trabajador.reviews.select_related('client__user').all().order_by('-id') 
+    context = {
+        'trabajador': trabajador,
+        'resenas': resenas,
+    }
+    return render(request, 'servicios/detalle_trabajador.html', context)
