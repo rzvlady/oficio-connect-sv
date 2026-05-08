@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError, PermissionDenied
 from .models import Category, WorkerProfile, ClientProfile, Review, JobRequest
 from .forms import ReviewForm, CategoryForm, WorkerProfileForm
 from django.contrib import messages
+
+
 @login_required
 def crear_resena(request, worker_id):
     trabajador = get_object_or_404(WorkerProfile, id=worker_id)
@@ -20,7 +22,7 @@ def crear_resena(request, worker_id):
 
     if request.method == 'POST':
         if not tiene_trabajo:
-            return render(request, 'servicios/perfil_trabajador.html', {
+            return render(request, 'servicios/review_trabajador.html', {
                 'worker': trabajador,
                 'error_mensaje': "No puedes calificar sin un trabajo completado.",
                 'form': form,
@@ -32,29 +34,43 @@ def crear_resena(request, worker_id):
             try:
                 form.save() 
                 messages.success(request, "¡Gracias! Tu reseña ha sido publicada con éxito.")
-                return redirect('perfil_trabajador', worker_id=trabajador.id)
+                return redirect('review_trabajador', worker_id=trabajador.id)
             except ValidationError:
                 form.add_error(None, "Ya has calificado a este trabajador anteriormente.")
             else:
                 pass
-    return render(request, 'servicios/perfil_trabajador.html', {
+    return render(request, 'servicios/review_trabajador.html', {
         'worker': trabajador,
         'form': form,
         'existe_trabajo': tiene_trabajo 
     })
 
-#category 
-
-def lista_categorias(request):
+def lista_categorias_cliente(request):
     categorias = Category.objects.all()
-    return render(request, "lista_categorias.html", {"categorias":categorias})
+    return render(request, 'servicios/cliente_categorias.html', {'categorias': categorias})
+
+def trabajadores_por_categoria(request, categoria_id):
+    categoria = get_object_or_404(Category, id=categoria_id)
+    trabajadores = WorkerProfile.objects.filter(category=categoria)
+    
+    return render(request, 'servicios/cliente_trabajadores.html', {
+        'categoria': categoria,
+        'trabajadores': trabajadores
+    })
+
+
+
+#todo el codigo de debajo funciona, pero da acceso a usuarios para eliminar datos importantes. Debe de cambiarse
+"""def lista_categorias(request):
+    categorias = Category.objects.all()
+    return render(request, "servicios/lista_categorias.html", {"categorias":categorias})
 
 def crear_categoria(request):
     form = CategoryForm(request.POST or None)
     if form.is_valid():
         form.save()
         return redirect("lista_categorias")
-    return render(request, "crear_categoria.html",{"form":form})
+    return render(request, "servicios/crear_categoria.html",{"form":form})
 
 def editar_categoria(request,id):
     categoria = Category.objects.get(id=id)
@@ -62,7 +78,7 @@ def editar_categoria(request,id):
     if form.is_valid():
         form.save()
         return redirect("lista_categorias")
-    return render(request, "editar_categorias.html",{"form":form})
+    return render(request, "servicios/editar_categorias.html",{"form":form})
 
 def eliminar_categoria(request, id):
     categoria = Category.objects.get(id=id)
@@ -97,10 +113,7 @@ def editar_worker(request,id):
 def eliminar_worker(request, id):
     worker = get_object_or_404(worker, id=id, user=request.user)
     worker.delete()
-    return redirect("lista_workers")
+    return redirect("lista_workers")"""
 
-def login_view(request):
-    return render(request, 'usuarios/login.html')
 
-def register_view(request):
-    return render(request, 'usuarios/register.html')
+

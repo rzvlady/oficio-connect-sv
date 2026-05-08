@@ -21,8 +21,7 @@
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                {% for worker in workers %}
-               <div class="card p-4 mt-4 shadow-sm">
+                
                 <h2>Perfil de {{ worker.full_name }}</h2>
 
                 <div class= "mb-3">
@@ -44,7 +43,6 @@
                                     {% endfor %}
                                     {% for error in form.non_field_errors %}
                                         <li>{{ error }}</li>
-                                </div>
                                     {% endfor %}
                                 </ul>
                             </div>
@@ -82,6 +80,6 @@
             </div>
         </div>
     </div>
-    {% endfor %}
+
 </body>
 </html>

@@ -2,11 +2,106 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Inicio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Oficio Connect SV</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .welcome-card {
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <h2>Bienvenido, {{ user.username }}</h2>
-    <p>Has iniciado sesión de manera correcta :D</p>
-    <a href="{% url 'logout' %}">Cerrar sesión</a>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">Oficio Connect SV</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-content="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item">
+                        <span class="nav-link text-light me-3">Hola, <strong>{{ user.username }}</strong></span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light btn-sm" href="{% url 'logout' %}">Cerrar sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+
+                <div class="card welcome-card shadow-lg p-4 mb-5 text-center">
+                    <div class="card-body">
+                        <h1 class="display-4 fw-bold">¡Bienvenido!</h1>
+                        <p class="lead">Has iniciado sesión correctamente.</p>
+                        <hr class="my-4 border-light opacity-25">
+                        <p>¿Qué te gustaría hacer hoy?</p>
+                    </div>
+                </div>
+
+                <div class="row text-center">
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body">
+                                <h5 class="card-title">Categorías</h5>
+                                <p class="card-text text-muted">Gestiona los rubros de servicios disponibles.</p>
+
+
+                {% comment %} Cambiar el # por la url de la vista para mostrar a los clientes la busqueda por categorias {% endcomment %}
+                                <a href="/servicios/explorar/" class="btn btn-primary">Ver categorías</a>
+                                
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body">
+                                <h5 class="card-title">Trabajadores</h5>
+                                <p class="card-text text-muted">Explora o gestiona los perfiles de especialistas.</p>
+
+
+                {% comment %} Cambiar el # por la url de la vista para mostrar a los clientes la busqueda por perfiles {% endcomment %}
+                                <a href="#" class="btn btn-primary">Ver perfiles</a>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body">
+                                <h5 class="card-title">Configuración</h5>
+                                <p class="card-text text-muted">Ajusta los detalles de tu cuenta personal.</p>
+                                {% if user.client_profile %}
+                                    <a href="{% url 'completar_perfil_cliente' %}" class="btn btn-outline-primary">Editar mi perfil</a>
+                            {% elif user.workerprofile %}
+                                    <a href="#" class="btn btn-outline-secondary disabled">Editar perfil (Trabajador)</a>
+                            {% else %}
+                                <button class="btn btn-outline-secondary" disabled>Perfil no disponible</button>
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

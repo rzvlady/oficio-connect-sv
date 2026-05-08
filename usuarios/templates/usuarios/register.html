@@ -2,27 +2,120 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta - Oficio Connect SV</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .register-container {
+            margin-top: 3%;
+            max-width: 500px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
-    <h2>Crear cuenta</h2>
 
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% endif %}
+    <div class="container d-flex justify-content-center">
+        <div class="register-container w-100">
+            
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-primary">Oficio Connect SV</h2>
+                <p class="text-muted">Únete a la red de trabajadores de El Salvador</p>
+            </div>
 
-    <form method="POST">
-        {% csrf_token %}
-        <label>Usuario:</label>
-        <input type="text" name="username" required><br><br>
-        <label>Contraseña:</label>
-        <input type="password" name="password1" required><br><br>
-        <label>Confirmar contraseña:</label>
-        <input type="password" name="password2" required><br><br>
-        <button type="submit">Registrarse</button>
-    </form>
+            <div class="card shadow-lg mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-center mb-4">Crear cuenta</h3>
 
-    <br>
-    <a href="{% url 'login' %}">¿Ya tienes cuenta? Inicia sesión</a>
+                    {% if error %}
+                        <div class="alert alert-danger py-2 shadow-sm" role="alert">
+                            <small>{{ error }}</small>
+                        </div>
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Usuario -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nombre de usuario</label>
+                            <input type="text" 
+                                    name="username" 
+                                    id="username" 
+                                    class="form-control" 
+                                    placeholder="Ej: Nayib_Bukele"
+                                    required>
+                            <div class="form-text">Este será tu nombre de identificación en la plataforma.</div>
+                        </div>
+
+                        <!-- Contraseña -->
+                        <div class="mb-3">
+                            <label for="password1" class="form-label">Contraseña</label>
+                            <input type="password" 
+                                    name="password1" 
+                                    id="password1" 
+                                    class="form-control" 
+                                    placeholder="Crea una contraseña segura"
+                                    required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password2" class="form-label">Confirmar contraseña</label>
+                            <input type="password" 
+                                    name="password2" 
+                                    id="password2" 
+                                    class="form-control" 
+                                    placeholder="Repite tu contraseña"
+                                    required>
+                        </div> 
+                        <div class="mb-4">
+                            <label class="form-label d-block fw-bold">¿Qué deseas hacer en Oficio Connect SV?</label>
+                            
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="tipo_usuario" id="radioCliente" value="cliente" checked required>
+                                <label class="form-check-label" for="radioCliente">
+                                    Buscar servicios (Cliente)
+                                </label>
+                            </div>
+                            
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="tipo_usuario" id="radioTrabajador" value="trabajador" required>
+                                <label class="form-check-label" for="radioTrabajador">
+                                    Ofrecer mis servicios (Trabajador)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                                Registrarse
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Link de Volver al Login -->
+            <div class="text-center mb-5">
+                <p class="text-muted">
+                    ¿Ya tienes cuenta? 
+                    <a href="{% url 'login' %}" class="text-decoration-none fw-bold">Inicia sesión</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

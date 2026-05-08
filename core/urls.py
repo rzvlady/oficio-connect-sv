@@ -10,8 +10,10 @@ urlpatterns = [
     path('usuarios/', include('usuarios.urls')),
     path('servicios/', include('servicios.urls')),
     path('__debug__/', include(debug_toolbar.urls)),
-    path('', include('usuarios.urls'))
+    path('', include('usuarios.urls')),
+    path('servicios/', include(('servicios.urls', 'servicios'), namespace='servicios')),
 ]
+
 
 if settings.DEBUG:
     import debug_toolbar
