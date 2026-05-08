@@ -1,4 +1,4 @@
-from servicios.models import ClientProfile
+from servicios.models import ClientProfile, WorkerProfile
 from django import forms
 
 class ClientProfileForm(forms.ModelForm):
@@ -13,3 +13,8 @@ class ClientProfileForm(forms.ModelForm):
             'municipality': forms.TextInput(attrs={'class': 'form-control'}),
             'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
         }
+
+class WorkerProfileForm(forms.ModelForm):
+    class Meta:
+        model = WorkerProfile
+        fields = '__all__'
