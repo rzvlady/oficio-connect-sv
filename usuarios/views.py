@@ -26,7 +26,14 @@ def logout_view(request):
 
 @login_required(login_url='login')
 def home_view(request):
-    response = render(request, 'usuarios/home.html')
+    if hasattr(request.user, 'client_profile'):
+        template_name = 'usuarios/home_cliente.html'
+    elif hasattr(request.user, 'worker_profile'):
+        template_name = 'usuarios/home_trabajador.html'
+    else:
+        template_name = 'usuarios/home.html'
+
+    response = render(request, template_name)
     response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
     response['Pragma'] = 'no-cache'
     return response
@@ -40,43 +47,29 @@ def register_view(request):
 
         if password1 != password2:
             return render(request, 'usuarios/register.html', {'error': 'Las contraseñas no coinciden'})
-            
         if User.objects.filter(username=username).exists():
             return render(request, 'usuarios/register.html', {'error': '¡El usuario ya existe!'})
-            
-        # 1. Creamos el usuario base
         user = User.objects.create_user(username=username, password=password1)
-        
-        # 2. Iniciamos sesión de una vez
         login(request, user)
         
-        # 3. Redirección y creación según el tipo
         if tipo_usuario == 'trabajador':
             WorkerProfile.objects.get_or_create(user=user)
-            # Cambiamos 'home' por la vista de perfil de trabajador (cuando la tengas)
-            return redirect('completar_perfil_trabajador') 
-            
+            return redirect('completar_perfil_trabajador')           
         elif tipo_usuario == 'cliente':
             ClientProfile.objects.get_or_create(user=user)
-            # Aquí es donde lo mandamos a la vista que acabamos de hacer
             return redirect('completar_perfil_cliente')
             
     return render(request, 'usuarios/register.html')
 
 @login_required
 def completar_perfil_cliente(request):
-    # 1. Obtener o crear el perfil
     perfil, created = ClientProfile.objects.get_or_create(user=request.user)
-    
-    # 2. Lógica de 'created': Definir un mensaje según el estado
     if created:
         titulo_pantalla = "¡Bienvenido! Crea tu perfil de cliente"
         subtitulo = "Por favor, completa tus datos para empezar a solicitar servicios."
     else:
         titulo_pantalla = "Editar Perfil"
         subtitulo = "Actualiza tu información personal a continuación."
-
-    # 3. Procesamiento del Formulario   
     if request.method == 'POST':
         form = ClientProfileForm(request.POST, request.FILES, instance=perfil)
         if form.is_valid():
@@ -84,14 +77,12 @@ def completar_perfil_cliente(request):
             return redirect('home')
     else:
         form = ClientProfileForm(instance=perfil)
-
-    # 4. Pasar las variables al HTML
     context = {
         'form': form,
         'perfil': perfil,
         'titulo': titulo_pantalla,
         'subtitulo': subtitulo,
-        'nuevo_perfil': created # También puedes pasar el booleano directamente
+        'nuevo_perfil': created 
     }
 
     return render(request, 'usuarios/completar_perfil.html', context)

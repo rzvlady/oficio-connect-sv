@@ -58,30 +58,12 @@ def trabajadores_por_categoria(request, categoria_id):
         'trabajadores': trabajadores
     })
 
-
-
-
-def lista_categorias(request):
-    categorias = Category.objects.all()
-    return render(request, "servicios/lista_categorias.html", {"categorias":categorias})
-
-def crear_categoria(request):
-    form = CategoryForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        return redirect("lista_categorias")
-    return render(request, "servicios/crear_categoria.html",{"form":form})
-
-def editar_categoria(request,id):
-    categoria = Category.objects.get(id=id)
-    form = CategoryForm(request.POST or None, instance=categoria)
-    if form.is_valid():
-        form.save()
-        return redirect("lista_categorias")
-    return render(request, "servicios/editar_categorias.html",{"form":form})
-
-def eliminar_categoria(request, id):
-    categoria = Category.objects.get(id=id)
-    categoria.delete()
-    return redirect("lista_categorias")
-
+@login_required(login_url='login')
+def detalle_trabajador(request, trabajador_id):
+    trabajador = get_object_or_404(WorkerProfile.objects.select_related('user'), id=trabajador_id)
+    resenas = trabajador.reviews.select_related('client__user').all().order_by('-id') 
+    context = {
+        'trabajador': trabajador,
+        'resenas': resenas,
+    }
+    return render(request, 'servicios/detalle_trabajador.html', context)
