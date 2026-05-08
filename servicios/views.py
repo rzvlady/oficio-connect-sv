@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from .models import Category, WorkerProfile, ClientProfile, Review, JobRequest
 from .forms import ReviewForm, CategoryForm, WorkerProfileForm
 from django.contrib import messages
 @login_required
 def crear_resena(request, worker_id):
     trabajador = get_object_or_404(WorkerProfile, id=worker_id)
+
     cliente = get_object_or_404(ClientProfile, user=request.user)
 
     tiene_trabajo = JobRequest.objects.filter(
@@ -71,25 +72,30 @@ def eliminar_categoria(request, id):
 #trabajadores
 def lista_workers(request):
     workers = WorkerProfile.objects.all()
-    return render(request, "perfil_trabajador.html", {"workers":workers})
+    return render(request, "servicios/perfil_trabajador.html", {"workers":workers})
 
+@login_required
 def crear_worker(request):
     form = WorkerProfileForm(request.POST or None)
     if form.is_valid():
-        form.save()
+        worker = form.save(commit=False)
+        worker.user = request.user
+        worker.save()
         return redirect("lista_workers")
     return render(request, "servicios/crear_worker.html",{"form":form})
 
+@login_required
 def editar_worker(request,id):
-    worker = WorkerProfile.objects.get(id=id)
+    worker = get_object_or_404(worker, id=id, user=request.user)
     form = WorkerProfileForm(request.POST or None, instance=worker)
     if form.is_valid():
         form.save()
         return redirect("lista_workers")
     return render(request, "servicios/editar_worker.html",{"form":form})
 
+@login_required
 def eliminar_worker(request, id):
-    worker = WorkerProfile.objects.get(id=id)
+    worker = get_object_or_404(worker, id=id, user=request.user)
     worker.delete()
     return redirect("lista_workers")
 
