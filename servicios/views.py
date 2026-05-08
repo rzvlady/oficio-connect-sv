@@ -60,8 +60,8 @@ def trabajadores_por_categoria(request, categoria_id):
 
 
 
-#todo el codigo de debajo funciona, pero da acceso a usuarios para eliminar datos importantes. Debe de cambiarse
-"""def lista_categorias(request):
+
+def lista_categorias(request):
     categorias = Category.objects.all()
     return render(request, "servicios/lista_categorias.html", {"categorias":categorias})
 
@@ -88,7 +88,36 @@ def eliminar_categoria(request, id):
 #trabajadores
 def lista_workers(request):
     workers = WorkerProfile.objects.all()
-    return render(request, "servicios/perfil_trabajador.html", {"workers":workers})
+    return render(request, "servicios/lista_workers.html", {"workers":workers})
+
+@login_required
+def completar_perfil_trabajador(request):
+    # 1. Obtener o crear el perfil
+    perfil, created = WorkerProfile.objects.get_or_create(user=request.user)
+    
+    # 2. Lógica de 'created': Definir un mensaje según el estado
+    if created:
+        titulo_pantalla = "¡Bienvenido! Crea tu perfil de trabajador"
+        subtitulo = "Por favor, completa tus datos para empezar a ofrecer tus servicios."
+    else:
+        titulo_pantalla = "Editar Perfil"
+        subtitulo = "Actualiza tu información profesional a continuación."
+
+    # 3. Procesamiento del Formulario   
+    if request.method == 'POST':
+        form = WorkerProfileForm(request.POST, request.FILES, instance=perfil)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = WorkerProfileForm(instance=perfil)
+    
+    context = {
+        'form': form, 
+        'titulo_pantalla': titulo_pantalla,
+        'subtitulo': subtitulo
+        }
+    return render(request,'servicios/completar_perfil_trabajador.html', context)
 
 @login_required
 def crear_worker(request):
@@ -102,7 +131,7 @@ def crear_worker(request):
 
 @login_required
 def editar_worker(request,id):
-    worker = get_object_or_404(worker, id=id, user=request.user)
+    worker = get_object_or_404(WorkerProfile, id=id, user=request.user)
     form = WorkerProfileForm(request.POST or None, instance=worker)
     if form.is_valid():
         form.save()
@@ -113,7 +142,7 @@ def editar_worker(request,id):
 def eliminar_worker(request, id):
     worker = get_object_or_404(worker, id=id, user=request.user)
     worker.delete()
-    return redirect("lista_workers")"""
+    return redirect("lista_workers")
 
 
 
