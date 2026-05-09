@@ -14,7 +14,7 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
 class WorkerProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = "worker_profille")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = "worker_profile")
     full_name = models.CharField(max_length=250, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, related_name="workers", null=True, blank=True)
     bio = models.TextField(help_text="Breve descripción de su experiencia en el trabajo", null=True, blank=True)
