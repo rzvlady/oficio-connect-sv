@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Trabajador - Oficio Connect SV</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; }
+        .sidebar { background-color: #ffffff; min-height: 100vh; border-right: 1px solid #dee2e6; }
+        .nav-link { color: #495057; font-weight: 500; }
+        .nav-link.active { color: #0d6efd; background-color: #e9f2ff; border-radius: 8px; }
+        .stat-card { border: none; border-radius: 12px; transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar (Navegación Lateral) -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-4">
+            <h4 class="text-primary fw-bold mb-4">Oficio Connect</h4>
+            <ul class="nav flex-column gap-2">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">🏠 Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">📋 Mis Solicitudes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'completar_perfil_trabajador' %}">👤 Mi Perfil</a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a class="nav-link text-danger" href="{% url 'logout' %}">🚪 Cerrar Sesión</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenido Principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                <h1 class="h2">Bienvenido, {{ request.user.username }}</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <span class="badge bg-success p-2">Estado: Activo</span>
+                </div>
+            </div>
+
+            <!-- Resumen de Estadísticas -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card stat-card shadow-sm p-3 mb-3 bg-white">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Trabajos Completados</h6>
+                            <h2 class="fw-bold">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card shadow-sm p-3 mb-3 bg-white">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Calificación Promedio</h6>
+                            <h2 class="fw-bold text-warning">★ 0.0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card shadow-sm p-3 mb-3 bg-white">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">Nuevas Solicitudes</h6>
+                            <h2 class="fw-bold text-primary">0</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Solicitudes Recientes -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">Solicitudes de Trabajo Recientes</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-center text-muted my-5">Aún no tienes solicitudes de trabajo. ¡Asegúrate de completar bien tu perfil para que los clientes te encuentren!</p>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -20,6 +20,7 @@
 </head>
 <body>
 
+    <!-- Navegación Superior -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">Oficio Connect SV</a>
@@ -39,10 +40,12 @@
         </div>
     </nav>
 
+    <!-- Contenido Principal -->
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-10">
 
+                <!-- Tarjeta de Bienvenida -->
                 <div class="card welcome-card shadow-lg p-4 mb-5 text-center">
                     <div class="card-body">
                         <h1 class="display-4 fw-bold">¡Bienvenido!</h1>
@@ -52,56 +55,43 @@
                     </div>
                 </div>
 
+                <!-- Cajas de Opciones (Divididas simétricamente en 2 columnas) -->
                 <div class="row text-center">
-                    <div class="col-md-4 mb-4">
+                    
+                    <!-- Caja 1: Categorías -->
+                    <div class="col-md-6 mb-4">
                         <div class="card h-100 shadow-sm border-0">
                             <div class="card-body">
                                 <h5 class="card-title">Categorías</h5>
                                 <p class="card-text text-muted">Gestiona los rubros de servicios disponibles.</p>
-
-
-                {% comment %} Cambiar el # por la url de la vista para mostrar a los clientes la busqueda por categorias {% endcomment %}
-                                <a href="/servicios/explorar/" class="btn btn-primary">Ver categorías</a>
-                                
-
+                                <a href="{% url 'explorar_categorias' %}" class="btn btn-primary">Ver categorías</a>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 shadow-sm border-0">
-                            <div class="card-body">
-                                <h5 class="card-title">Trabajadores</h5>
-                                <p class="card-text text-muted">Explora o gestiona los perfiles de especialistas.</p>
 
-
-                {% comment %} Cambiar el # por la url de la vista para mostrar a los clientes la busqueda por perfiles {% endcomment %}
-                                <a href="{% url 'lista_workers' %}" class="btn btn-primary">Ver perfiles</a>
-                            </a>
-
-
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-4">
+                    <!-- Caja 2: Configuración -->
+                    <div class="col-md-6 mb-4">
                         <div class="card h-100 shadow-sm border-0">
                             <div class="card-body text-center">
                                 <h5 class="card-title">Configuración</h5>
                                 <p class="card-text text-muted">Ajusta los detalles de tu cuenta personal.</p>
+                                
                                 {% if user.client_profile %}
                                     <a href="{% url 'completar_perfil_cliente' %}" class="btn btn-outline-primary">Editar mi perfil</a>
-                                        
-                                {% elif user.workerprofile %}
+                                {% elif user.worker_profile %}
                                     <a href="{% url 'completar_perfil_trabajador' %}" class="btn btn-primary">Editar mi información</a>
                                 {% endif %}  
+                            </div>
                         </div>
                     </div>
-                </div>
 
-            </div>
-        </div>
-    </div>
+                </div> <!-- Fin de row text-center -->
 
+            </div> <!-- Fin de col-md-10 -->
+        </div> <!-- Fin de row justify-content-center -->
+    </div> <!-- Fin de container mt-5 -->
+
+    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
