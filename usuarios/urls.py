@@ -11,4 +11,6 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
 
     path('completar_perfil/', views.completar_perfil_cliente, name='completar_perfil_cliente'),
+
+    path('perfil/completar/', views.completar_perfil_trabajador, name='completar_perfil_trabajador'),
 ]

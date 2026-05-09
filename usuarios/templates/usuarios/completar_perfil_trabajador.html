@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo_pantalla }} - Oficio Connect SV</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        body { 
+            background-color: #f4f7f6; 
+        }
+        .setup-card { 
+            max-width: 800px;
+            margin: 50px auto;
+            border: none;
+            border-radius: 12px; 
+        }
+        .btn-primary { 
+            background-color: #0d6efd; 
+            border: none; 
+        }
+        
+        /* Ajuste para que los inputs de Django tomen el estilo de Bootstrap automáticamente */
+        input, select, textarea {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card setup-card shadow-lg">
+            <div class="card-header bg-white text-center py-4 border-0">
+                <h2 class="fw-bold text-primary">{{ titulo_pantalla }}</h2>
+                <p class="text-muted">{{ subtitulo }}</p>
+            </div>
+            
+            <div class="card-body px-5 pb-5">
+                <div class="mx-auto" style="max-width: 600px;">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Sección de Foto de Perfil -->
+                        <div class="mb-4 text-center">
+                            <label class="form-label d-block fw-semibold">Foto de perfil</label>
+                            <div class="mb-3">
+                                {% if form.instance.profile_picture %}
+                                    <img src="{{ form.instance.profile_picture.url }}" 
+                                        alt="Foto de perfil del trabajador" 
+                                        class="rounded-circle img-thumbnail shadow-sm" 
+                                        style="width: 150px; height: 150px; object-fit: cover;">
+                                {% else %}
+                                    <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center border" 
+                                        style="width: 150px; height: 150px;">
+                                        <!-- Icono de constructor para diferenciarlo del cliente -->
+                                        <span class="text-muted" style="font-size: 3rem;">👷</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-inline-block text-start">
+                                {{ form.profile_picture }}
+                                <small class="text-muted d-block mt-2 text-center">Sube una foto clara para generar más confianza en la plataforma.</small>
+                            </div>
+                        </div>
+
+                        <!-- Renderizado manual en cuadrícula (Grid) y en Español -->
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Nombre Completo</label>
+                                {{ form.full_name }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Teléfono de contacto</label>
+                                {{ form.phone_number }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Área de servicio / Localidad</label>
+                                {{ form.service_area }}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Categoría del Oficio</label>
+                                {{ form.category }}
+                                <small class="text-muted d-block mt-1">Selecciona el área principal en la que te desempeñas.</small>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Descripción de tu experiencia (Biografia)</label>
+                                {{ form.bio }}
+                                <small class="text-muted d-block mt-1">Describe brevemente los trabajos que realizas y tus años de experiencia. Esto ayudará a los clientes a elegirte.</small>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                                Guardar y continuar
+                        </div>
+                    </form>
+                </div> 
+            </div> 
+        </div> 
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

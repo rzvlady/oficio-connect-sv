@@ -6,12 +6,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
-    # Usuarios: Login, Register, Home
     path('', include('usuarios.urls')), 
-
-    # Servicios: Detalle trabajador, Categorías, etc.
-    # Quitamos el namespace y lo dejamos plano
     path('servicios/', include('servicios.urls')),
 ]
 

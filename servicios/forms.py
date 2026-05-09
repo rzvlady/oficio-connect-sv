@@ -19,7 +19,4 @@ class CategoryForm(forms.ModelForm):
         model = Category
         fields = '__all__'
 
-class WorkerProfileForm(forms.ModelForm):
-    class Meta:
-        model = WorkerProfile
-        fields = '__all__'
+
