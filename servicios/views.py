@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
-from .models import Category, WorkerProfile, ClientProfile, Review, JobRequest
-from .forms import ReviewForm
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from .models import Category, WorkerProfile, ClientProfile, JobRequest
+from .forms import ReviewForm, JobRequestForm
 from django.contrib import messages
-
 
 @login_required
 def crear_resena(request, worker_id):
@@ -69,3 +68,51 @@ def detalle_trabajador(request, trabajador_id):
     return render(request, 'servicios/detalle_trabajador.html', context)
 
 
+# Asegúrate de tener tus otras importaciones aquí (messages, redirect, render, etc.)
+
+@login_required(login_url='login')
+def solicitar_trabajo(request, worker_id):
+    
+    # 1. Validar que el usuario sea un Cliente y obtener su perfil
+    try:
+        cliente = request.user.client_profile
+    except ObjectDoesNotExist:
+        messages.error(request, "Tu cuenta no tiene un perfil de cliente registrado.")
+        return redirect('home')
+
+    # 2. Obtener el perfil del trabajador al que se le pide el servicio
+    trabajador = get_object_or_404(WorkerProfile, id=worker_id)
+
+    # 3. Procesar el formulario
+    if request.method == 'POST':
+        form = JobRequestForm(request.POST, request.FILES)
+        if form.is_valid():
+            solicitud = form.save(commit=False)
+            solicitud.client = cliente  
+            solicitud.worker = trabajador
+            solicitud.save()
+            
+            messages.success(request, f"¡Tu solicitud a {trabajador.user.username} ha sido enviada con éxito!")
+            return redirect('mis_solicitudes')
+    else:
+        form = JobRequestForm()
+
+    context = {
+        'form': form,
+        'trabajador': trabajador
+    }
+    return render(request, 'servicios/solicitar_trabajo.html', context)
+
+@login_required(login_url='login')
+def mis_solicitudes(request):
+    try:
+        cliente = request.user.client_profile
+    except ObjectDoesNotExist:
+        messages.error(request, "Acceso denegado. No tienes un perfil de cliente.")
+        return redirect('home')
+    solicitudes = JobRequest.objects.filter(client=cliente).order_by('-created_at')
+
+    return render(request, 'servicios/mis_solicitudes.html', {
+        'solicitudes': solicitudes
+    })
+    

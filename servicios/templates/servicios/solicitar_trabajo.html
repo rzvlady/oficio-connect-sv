@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitar Servicio - Oficio Connect SV</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                
+                <a href="{% url 'detalle_trabajador' trabajador.id %}" class="btn btn-outline-secondary mb-3">
+                    &larr; Volver al perfil
+                </a>
+
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body p-4">
+                        <h3 class="card-title fw-bold text-primary mb-1">Solicitar Servicio</h3>
+                        <p class="text-muted mb-4">Detalla tu problema para que <strong>{{ trabajador.user.username }}</strong> pueda evaluarlo.</p>
+
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                Por favor, corrige los errores en el formulario.
+                            </div>
+                        {% endif %}
+
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">
+                                    {{ form.description.label }}
+                                </label>
+                                {{ form.description }}
+                                {% if form.description.help_text %}
+                                    <div class="form-text">{{ form.description.help_text }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.address_reference.id_for_label }}" class="form-label fw-semibold">
+                                    {{ form.address_reference.label }}
+                                </label>
+                                {{ form.address_reference }}
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="{{ form.evidencia_foto.id_for_label }}" class="form-label fw-semibold">
+                                    {{ form.evidencia_foto.label }}
+                                </label>
+                                {{ form.evidencia_foto }}
+                                <div class="form-text">Sube una foto del problema para ayudar al trabajador a prepararse (Opcional).</div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success btn-lg rounded-3 fw-bold">
+                                    Enviar Solicitud
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

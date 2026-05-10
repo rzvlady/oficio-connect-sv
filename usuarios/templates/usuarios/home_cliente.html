@@ -59,22 +59,31 @@
                 <div class="row text-center">
                     
                     <!-- Caja 1: Categorías -->
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-4 mb-4">
                         <div class="card h-100 shadow-sm border-0">
                             <div class="card-body">
-                                <h5 class="card-title">Categorías</h5>
-                                <p class="card-text text-muted">Gestiona los rubros de servicios disponibles.</p>
-                                <a href="{% url 'explorar_categorias' %}" class="btn btn-primary">Ver categorías</a>
+                                <h5 class="card-title text-primary fw-bold">Categorías</h5>
+                                <p class="card-text text-muted">Explora y encuentra el trabajador ideal para tu problema.</p>
+                                <a href="{% url 'explorar_categorias' %}" class="btn btn-primary w-100">Buscar servicios</a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Caja 2: Configuración -->
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body">
+                                <h5 class="card-title text-success fw-bold">Mis Solicitudes</h5>
+                                <p class="card-text text-muted">Revisa el estado de los trabajos que has pedido recientemente.</p>
+                                <a href="{% url 'mis_solicitudes' %}" class="btn btn-success w-100">Ver historial</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
                         <div class="card h-100 shadow-sm border-0">
                             <div class="card-body text-center">
-                                <h5 class="card-title">Configuración</h5>
-                                <p class="card-text text-muted">Ajusta los detalles de tu cuenta personal.</p>
+                                <h5 class="card-title text-secondary fw-bold">Configuración</h5>
+                                <p class="card-text text-muted">Ajusta los detalles de tu cuenta personal y contacto.</p>
                                 
                                 {% if user.client_profile %}
                                     <a href="{% url 'completar_perfil_cliente' %}" class="btn btn-outline-primary">Editar mi perfil</a>

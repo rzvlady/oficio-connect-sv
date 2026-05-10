@@ -131,3 +131,4 @@ class JobRequest(models.Model):
     class Meta:
         verbose_name = "Solicitud de Trabajo"
         verbose_name_plural = "Solicitudes de Trabajo"
+        ordering = ['-created_at']

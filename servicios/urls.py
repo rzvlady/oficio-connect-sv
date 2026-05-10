@@ -10,13 +10,9 @@ urlpatterns = [
 
     path('trabajador/<int:trabajador_id>/', views.detalle_trabajador, name='detalle_trabajador'),
 
-
-
-    #path('workers/', views.lista_workers, name='lista_workers'),
-
-  #  path('workers/editar/<int:id>/', views.editar_worker, name='editar_worker'),
-
-    #path('workers/eliminar/<int:id>/', views.eliminar_worker, name='eliminar_worker'),
+    path('solicitar/<int:worker_id>/', views.solicitar_trabajo, name='solicitar_trabajo'),
     
+    path('mis-solicitudes/', views.mis_solicitudes, name='mis_solicitudes'),
+
 ]
 
