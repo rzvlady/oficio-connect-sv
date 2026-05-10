@@ -19,7 +19,7 @@ class WorkerProfile(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, related_name="workers", null=True, blank=True)
     bio = models.TextField(help_text="Breve descripción de su experiencia en el trabajo", null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
-    service_area = models.CharField(max_length=100, default="San Salvador")
+    service_area = models.CharField(max_length=100,)
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
 
     def total_reviews(self):
@@ -57,7 +57,7 @@ class WorkerProfile(models.Model):
         """esta funcion permie que ne el front se puedan mostrar graficamente
         calificaciones como '3 estrellas y la mitad de una' o sea, (3.5 estrellas o )"""
 
-def __str__(self):
+    def __str__(self):
 
         nombre = self.full_name if self.full_name else self.user.username
         if self.category:
@@ -122,6 +122,7 @@ class JobRequest(models.Model):
     address_reference = models.CharField(max_length=255, verbose_name="Referencia de ubicación",blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
+    evidencia_foto = models.ImageField(upload_to='solicitudes/',null=True, blank=True,verbose_name="Foto del problema (Opcional)")
 
     def __str__(self):
         # Usamos el username de la relación con User para el nombre en el admin
