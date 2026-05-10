@@ -132,3 +132,17 @@ class JobRequest(models.Model):
         verbose_name = "Solicitud de Trabajo"
         verbose_name_plural = "Solicitudes de Trabajo"
         ordering = ['-created_at']
+
+class Message(models.Model):
+    job_request = models.ForeignKey(JobRequest, on_delete=models.CASCADE, related_name='mensajes')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mensajes_enviados')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mensajes_recibidos')
+    content = models.TextField(verbose_name="Contenido del mensaje")
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return f"De {self.sender.username} para {self.receiver.username}"
