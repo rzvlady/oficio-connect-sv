@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Oficio Connect SV</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .chat-box { height: 450px; overflow-y: auto; background-color: #f8f9fa; }
+        .msg-mio { background-color: #dcf8c6; border-radius: 15px 15px 0 15px; }
+        .msg-otro { background-color: #ffffff; border-radius: 15px 15px 15px 0; border: 1px solid #dee2e6; }
+    </style>
+</head>
+<body class="bg-light">
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                
+                <div class="card shadow-sm border-0 mb-3">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            Chat sobre: Solicitud #{{ job_request.id }}
+                        </h5>
+                        <a href="{% url 'home' %}" class="btn btn-sm btn-light text-primary fw-bold">Volver</a>
+                    </div>
+                    
+                    <div class="card-body chat-box p-4" id="chatContainer">
+                        {% for msj in mensajes %}
+                            <div class="d-flex mb-3 {% if msj.sender == request.user %}justify-content-end{% else %}justify-content-start{% endif %}">
+                                <div class="p-3 shadow-sm {% if msj.sender == request.user %}msg-mio{% else %}msg-otro{% endif %}" style="max-width: 75%;">
+                                    <small class="fw-bold d-block text-muted mb-1" style="font-size: 0.75rem;">
+                                        {{ msj.sender.username }}
+                                    </small>
+                                    <p class="mb-1">{{ msj.content }}</p>
+                                    <small class="text-muted d-block text-end" style="font-size: 0.65rem;">
+                                        {{ msj.timestamp|date:"d/m/Y H:i" }}
+                                    </small>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="text-center text-muted mt-5">
+                                <p>No hay mensajes todavía.</p>
+                                <p>Envía el primer mensaje para iniciar la conversación.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="card-footer bg-white p-3 border-0">
+                        <form method="POST" class="d-flex gap-2">
+                            {% csrf_token %}
+                            
+                            {{ form.content }}
+
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

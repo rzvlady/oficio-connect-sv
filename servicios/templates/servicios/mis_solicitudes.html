@@ -38,6 +38,7 @@
                                 <th>Descripción</th>
                                 <th>Foto</th>
                                 <th>Estado</th>
+                                <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -46,8 +47,23 @@
                                     <td class="text-muted" style="font-size: 0.9rem;">
                                         {{ solicitud.created_at|date:"d/m/Y H:i" }}
                                     </td>
+                                    
                                     <td>
-                                        <span class="fw-bold text-dark">{{ solicitud.worker.user.get_full_name|default:solicitud.worker.user.username }}</span>
+                                        <div class="d-flex flex-column">
+                                            <span class="fw-bold text-dark mb-1">
+                                                {{ solicitud.worker.user.get_full_name|default:solicitud.worker.user.username }}
+                                            </span>
+                                            
+                                            {% if solicitud.status == 'COMPLETED' %}
+                                                <a href="{% url 'review_trabajador' worker_id=solicitud.worker.id %}" class="text-warning text-decoration-none" style="font-size: 0.85rem; font-weight: 500;">
+                                                    Calificar trabajo
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted" style="font-size: 0.75rem; font-style: italic;">
+                                                    Pendiente de finalización
+                                                </span>
+                                            {% endif %}
+                                        </div>
                                     </td>
                                     <td>
                                         <p class="mb-0 text-truncate" style="max-width: 250px;" title="{{ solicitud.description }}">
@@ -72,6 +88,13 @@
                                             {{ solicitud.get_status_display }}
                                         </span>
                                     </td>
+                                    
+                                    <td class="text-center">
+                                        <a href="{% url 'chat_solicitud' solicitud.id %}" class="btn btn-outline-primary btn-sm rounded-pill fw-bold shadow-sm">
+                                            Abrir Chat
+                                        </a>
+                                    </td>
+                                    
                                 </tr>
                             {% endfor %}
                         </tbody>

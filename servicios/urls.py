@@ -14,5 +14,7 @@ urlpatterns = [
     
     path('mis-solicitudes/', views.mis_solicitudes, name='mis_solicitudes'),
 
+    path('solicitud/<int:request_id>/chat/', views.chat_solicitud, name='chat_solicitud'),
+
 ]
 

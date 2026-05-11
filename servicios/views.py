@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from .models import Category, WorkerProfile, ClientProfile, JobRequest
-from .forms import ReviewForm, JobRequestForm
+from .models import Category, WorkerProfile, ClientProfile, JobRequest, Message
+from .forms import ReviewForm, JobRequestForm, MessageForm
 from django.contrib import messages
 
 @login_required
@@ -67,9 +67,6 @@ def detalle_trabajador(request, trabajador_id):
     }
     return render(request, 'servicios/detalle_trabajador.html', context)
 
-
-# Asegúrate de tener tus otras importaciones aquí (messages, redirect, render, etc.)
-
 @login_required(login_url='login')
 def solicitar_trabajo(request, worker_id):
     
@@ -116,3 +113,44 @@ def mis_solicitudes(request):
         'solicitudes': solicitudes
     })
     
+@login_required(login_url='login')
+def chat_solicitud(request, request_id):
+    job_request = get_object_or_404(JobRequest, id=request_id)
+
+    # Verificación de permisos
+    es_cliente = hasattr(request.user, 'client_profile') and job_request.client == request.user.client_profile
+    es_trabajador = hasattr(request.user, 'worker_profile') and job_request.worker == request.user.worker_profile
+
+    if not (es_cliente or es_trabajador):
+        messages.error(request, "No tienes permiso para ver esta conversación.")
+        return redirect('home')
+
+    # Procesamiento con Django Forms
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            # Creamos el objeto mensaje sin guardarlo aún
+            mensaje = form.save(commit=False)
+            mensaje.job_request = job_request
+            mensaje.sender = request.user
+            
+            # Asignamos al receptor correcto
+            if es_cliente:
+                mensaje.receiver = job_request.worker.user
+            else:
+                mensaje.receiver = job_request.client.user
+                
+            mensaje.save() # Guardamos en BD
+            return redirect('chat_solicitud', request_id=job_request.id)
+    else:
+        # Si es GET, creamos un formulario en blanco
+        form = MessageForm()
+
+    mensajes = job_request.mensajes.all()
+
+    context = {
+        'job_request': job_request,
+        'mensajes': mensajes,
+        'form': form,  # <-- Ahora pasamos el form al template
+    }
+    return render(request, 'servicios/chat_solicitud.html', context)    

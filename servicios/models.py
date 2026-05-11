@@ -64,12 +64,13 @@ class WorkerProfile(models.Model):
             return f"{nombre} - {self.category.name}"
         
         return f"{nombre} - Sin categoría asignada"
+    
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client_profile")
     full_name = models.CharField(max_length=250, null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     address = models.CharField(max_length=255, help_text="Dirección para recibir el servicio", null=True, blank=True)
-    municipality = models.CharField(max_length=100, default="San Salvador", verbose_name="Municipio") #quitar eso total es solo en el AMSS
+    municipality = models.CharField(max_length=100, verbose_name="Municipio") #quitar eso total es solo en el AMSS
     profile_picture = models.ImageField(upload_to='clients/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -77,6 +78,7 @@ class ClientProfile(models.Model):
         if self.full_name:
             return f"Cliente: {self.full_name}"
         return f"Cliente: {self.user.username}"
+    
 class Review(models.Model):
     worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name="reviews")
     client = models.ForeignKey(ClientProfile, on_delete=models.CASCADE)
@@ -105,10 +107,7 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review de {self.worker.full_name} por {self.client.full_name}"
-
-from django.db import models
-from django.utils import timezone
-
+    
 class JobRequest(models.Model):
     STATUS_CHOICES = [
         ('PENDING', 'Pendiente'),

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Review, Category, WorkerProfile, ClientProfile
+from .models import Review, Category, JobRequest, Message
 
 class ReviewForm(forms.ModelForm):
     class Meta:
@@ -19,9 +19,6 @@ class CategoryForm(forms.ModelForm):
         model = Category
         fields = '__all__'
 
-from django import forms
-from .models import JobRequest
-
 class JobRequestForm(forms.ModelForm):
     class Meta:
         model = JobRequest
@@ -30,5 +27,20 @@ class JobRequestForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Ej. El chorro de la cocina tiene una fuga...'}),
             'address_reference': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej. Casa de portón negro frente al parque'}),
             'evidencia_foto': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['content']
+        widgets = {
+            'content': forms.TextInput(attrs={
+                'class': 'form-control rounded-pill',
+                'placeholder': 'Escribe un mensaje...',
+                'autocomplete': 'off',
+            })
+        }
+        labels = {
+            'content': ''
         }
 

@@ -18,7 +18,12 @@
                 <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-body p-4">
                         <h3 class="card-title fw-bold text-primary mb-1">Solicitar Servicio</h3>
-                        <p class="text-muted mb-4">Detalla tu problema para que <strong>{{ trabajador.user.username }}</strong> pueda evaluarlo.</p>
+                        <p class="text-muted mb-3">Detalla tu problema para que <strong>{{ trabajador.user.username }}</strong> pueda evaluarlo.</p>
+
+                        <div class="alert alert-info shadow-sm rounded-3 mb-4" role="alert">
+                            <strong>¿Tienes más detalles que compartir?</strong> 
+                            <br>Una vez que envíes esta solicitud, se habilitará un <strong>Chat Privado</strong> en tu historial de servicios para que te comuniques directamente con el trabajador.
+                        </div>
 
                         {% if form.errors %}
                             <div class="alert alert-danger">
