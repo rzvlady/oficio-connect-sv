@@ -23,9 +23,20 @@
 
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold text-primary">Historial de Solicitudes</h2>
+            <h2 class="fw-bold text-primary">
+                {% if rol == 'cliente' %}Mis Solicitudes Enviadas{% else %}Trabajos Recibidos{% endif %}
+            </h2>
             <a href="{% url 'home' %}" class="btn btn-outline-secondary">Volver al Inicio</a>
         </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
 
         {% if solicitudes %}
             <div class="card shadow-sm border-0 rounded-4">
@@ -34,7 +45,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Fecha</th>
-                                <th>Trabajador</th>
+                                <th>{% if rol == 'cliente' %}Trabajador{% else %}Cliente{% endif %}</th>
                                 <th>Descripción</th>
                                 <th>Foto</th>
                                 <th>Estado</th>
@@ -51,20 +62,23 @@
                                     <td>
                                         <div class="d-flex flex-column">
                                             <span class="fw-bold text-dark mb-1">
-                                                {{ solicitud.worker.user.get_full_name|default:solicitud.worker.user.username }}
+                                                {% if rol == 'cliente' %}
+                                                    {{ solicitud.worker.user.get_full_name|default:solicitud.worker.user.username }}
+                                                {% else %}
+                                                    {{ solicitud.client.user.get_full_name|default:solicitud.client.user.username }}
+                                                {% endif %}
                                             </span>
                                             
-                                            {% if solicitud.status == 'COMPLETED' %}
+                                            {% if solicitud.status == 'COMPLETED' and rol == 'cliente' %}
                                                 <a href="{% url 'review_trabajador' worker_id=solicitud.worker.id %}" class="text-warning text-decoration-none" style="font-size: 0.85rem; font-weight: 500;">
-                                                    Calificar trabajo
+                                                    ⭐ Calificar trabajo
                                                 </a>
-                                            {% else %}
-                                                <span class="text-muted" style="font-size: 0.75rem; font-style: italic;">
-                                                    Pendiente de finalización
-                                                </span>
+                                            {% elif solicitud.status != 'COMPLETED' and rol == 'cliente' %}
+                                                <span class="text-muted" style="font-size: 0.75rem; font-style: italic;">Pendiente de finalización</span>
                                             {% endif %}
                                         </div>
                                     </td>
+                                    
                                     <td>
                                         <p class="mb-0 text-truncate" style="max-width: 250px;" title="{{ solicitud.description }}">
                                             {{ solicitud.description }}
@@ -90,11 +104,35 @@
                                     </td>
                                     
                                     <td class="text-center">
-                                        <a href="{% url 'chat_solicitud' solicitud.id %}" class="btn btn-outline-primary btn-sm rounded-pill fw-bold shadow-sm">
+                                        <a href="{% url 'chat_solicitud' solicitud.id %}" class="btn btn-outline-primary btn-sm rounded-pill fw-bold shadow-sm w-100 mb-2">
                                             Abrir Chat
                                         </a>
+
+                                        <form method="POST" action="{% url 'cambiar_estado_solicitud' solicitud.id %}">
+                                            {% csrf_token %}
+                                            
+                                            {% if solicitud.status == 'PENDING' %}
+                                                {% if rol == 'trabajador' %}
+                                                    <button type="submit" name="accion" value="ACEPTAR" class="btn btn-success btn-sm rounded-pill w-100 shadow-sm">Aceptar Trabajo</button>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">Esperando al trabajador</span>
+                                                {% endif %}
+                                            
+                                            {% elif solicitud.status == 'ACCEPTED' %}
+                                                {% if rol == 'cliente' and solicitud.client_confirmation %}
+                                                    <span class="badge bg-info text-dark">Esperando confirmación del trabajador...</span>
+                                                {% elif rol == 'trabajador' and solicitud.worker_confirmation %}
+                                                    <span class="badge bg-info text-dark">Esperando confirmación del cliente...</span>
+                                                {% else %}
+                                                    <div class="d-grid gap-1 mt-2">
+                                                        <button type="submit" name="accion" value="COMPLETAR" class="btn btn-success btn-sm">✔️ Marcar Completado</button>
+                                                        <button type="submit" name="accion" value="CANCELAR" class="btn btn-danger btn-sm">❌ Cancelar Trabajo</button>
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                        </form>
+
                                     </td>
-                                    
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -104,9 +142,14 @@
         {% else %}
             <div class="text-center mt-5">
                 <div class="alert alert-info py-5 shadow-sm rounded-4">
-                    <h4 class="fw-bold">Aún no has solicitado servicios</h4>
-                    <p class="mb-4">Cuando contactes a un trabajador, tus solicitudes aparecerán aquí.</p>
-                    <a href="{% url 'explorar_categorias' %}" class="btn btn-primary px-4">Explorar categorías ahora</a>
+                    <h4 class="fw-bold">No hay registros aún</h4>
+                    <p class="mb-4">
+                        {% if rol == 'cliente' %}
+                            Cuando contactes a un trabajador, tus solicitudes aparecerán aquí.
+                        {% else %}
+                            Cuando un cliente solicite tus servicios, los verás en este panel.
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         {% endif %}

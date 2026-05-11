@@ -23,24 +23,44 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from servicios.models import JobRequest # Asegúrate de importar el modelo
+
 @login_required(login_url='login')
 def home_view(request):
-    # Intentamos detectar el perfil del cliente
+    context = {}
+    
+    # 1. Caso: Cliente
     if hasattr(request.user, 'client_profile'):
         template_name = 'usuarios/home_cliente.html'
     
-    # Intentamos detectar el perfil del trabajador 
-    # (Ojo: si no pusiste related_name, Django usa 'workerprofile')
+    # 2. Caso: Trabajador
     elif hasattr(request.user, 'worker_profile') or hasattr(request.user, 'workerprofile'):
         template_name = 'usuarios/home_trabajador.html'
+        
+        # Obtenemos el perfil (manejando ambos nombres de relación por si acaso)
+        perfil = getattr(request.user, 'worker_profile', None) or getattr(request.user, 'workerprofile', None)
+        
+        if perfil:
+            # Filtramos las solicitudes del trabajador
+            solicitudes_todas = JobRequest.objects.filter(worker=perfil)
+            
+            # Pasamos datos al contexto
+            context['solicitudes_recientes'] = solicitudes_todas.order_by('-created_at')[:3]
+            context['total_completados'] = solicitudes_todas.filter(status='COMPLETED').count()
+            context['nuevas_solicitudes'] = solicitudes_todas.filter(status='PENDING').count()
+            
+            # Si tienes un método para el promedio en tu modelo WorkerProfile, úsalo aquí
+            context['promedio'] = getattr(perfil, 'get_average_rating', 0.0)
     
+    # 3. Caso: Usuario sin perfil o Admin
     else:
-        # Si es un admin o usuario nuevo sin perfil
         template_name = 'usuarios/home.html'
 
-    response = render(request, template_name)
+    response = render(request, template_name, context)
     
-    # Tus cabeceras de limpieza de caché
+    # Cabeceras de limpieza de caché
     response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
     response['Pragma'] = 'no-cache'
     return response
@@ -99,7 +119,6 @@ def completar_perfil_trabajador(request):
         'subtitulo': subtitulo
         }
     return render(request,'usuarios/completar_perfil_trabajador.html', context)
-
 
 def register_view(request):
     if request.method == 'POST':

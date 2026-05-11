@@ -12,32 +12,23 @@
         .nav-link.active { color: #0d6efd; background-color: #e9f2ff; border-radius: 8px; }
         .stat-card { border: none; border-radius: 12px; transition: transform 0.2s; }
         .stat-card:hover { transform: translateY(-5px); }
+        .transition-hover:hover { background-color: #f8f9fa; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar (Navegación Lateral) -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-4">
             <h4 class="text-primary fw-bold mb-4">Oficio Connect</h4>
             <ul class="nav flex-column gap-2">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">🏠 Inicio</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">📋 Mis Solicitudes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'completar_perfil_trabajador' %}">👤 Mi Perfil</a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a class="nav-link text-danger" href="{% url 'logout' %}">🚪 Cerrar Sesión</a>
-                </li>
+                <li class="nav-item"><a class="nav-link active" href="#">🏠 Inicio</a></li>
+
+                <li class="nav-item"><a class="nav-link" href="{% url 'completar_perfil_trabajador' %}">👤 Mi Perfil</a></li>
+                <li class="nav-item mt-4"><a class="nav-link text-danger" href="{% url 'logout' %}">🚪 Cerrar Sesión</a></li>
             </ul>
         </nav>
 
-        <!-- Contenido Principal -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
                 <h1 class="h2">Bienvenido, {{ request.user.username }}</h1>
@@ -46,41 +37,78 @@
                 </div>
             </div>
 
-            <!-- Resumen de Estadísticas -->
             <div class="row mb-4">
                 <div class="col-md-4">
-                    <div class="card stat-card shadow-sm p-3 mb-3 bg-white">
+                    <div class="card stat-card shadow-sm p-3 mb-3 bg-white border-start border-success border-4">
                         <div class="card-body text-center">
-                            <h6 class="text-muted">Trabajos Completados</h6>
-                            <h2 class="fw-bold">0</h2>
+                            <h6 class="text-muted small text-uppercase fw-bold">Trabajos Completados</h6>
+                            <h2 class="fw-bold mb-0">{{ total_completados|default:"0" }}</h2>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card stat-card shadow-sm p-3 mb-3 bg-white">
+                    <div class="card stat-card shadow-sm p-3 mb-3 bg-white border-start border-warning border-4">
                         <div class="card-body text-center">
-                            <h6 class="text-muted">Calificación Promedio</h6>
-                            <h2 class="fw-bold text-warning">★ 0.0</h2>
+                            <h6 class="text-muted small text-uppercase fw-bold">Calificación Promedio</h6>
+                            <h2 class="fw-bold text-warning mb-0">★ {{ promedio|floatformat:1|default:"0.0" }}</h2>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card stat-card shadow-sm p-3 mb-3 bg-white">
+                    <div class="card stat-card shadow-sm p-3 mb-3 bg-white border-start border-primary border-4">
                         <div class="card-body text-center">
-                            <h6 class="text-muted">Nuevas Solicitudes</h6>
-                            <h2 class="fw-bold text-primary">0</h2>
+                            <h6 class="text-muted small text-uppercase fw-bold">Nuevas Solicitudes</h6>
+                            <h2 class="fw-bold text-primary mb-0">{{ nuevas_solicitudes|default:"0" }}</h2>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sección de Solicitudes Recientes -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">Solicitudes de Trabajo Recientes</h5>
+                    <a href="{% url 'mis_solicitudes' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">Ver todas</a>
                 </div>
-                <div class="card-body">
-                    <p class="text-center text-muted my-5">Aún no tienes solicitudes de trabajo. ¡Asegúrate de completar bien tu perfil para que los clientes te encuentren!</p>
+                
+                <div class="card-body p-0">
+                    {% if solicitudes_recientes %}
+                        <div class="list-group list-group-flush">
+                            {% for solicitud in solicitudes_recientes %}
+                                <div class="list-group-item p-4 transition-hover">
+                                    <div class="d-flex w-100 justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0 fw-bold text-dark">
+                                            Cliente: {{ solicitud.client.user.username }}
+                                        </h6>
+                                        <small class="text-muted">{{ solicitud.created_at|timesince }} ago</small>
+                                    </div>
+                                    
+                                    <p class="mb-2 text-muted text-truncate" style="max-width: 90%;">
+                                        {{ solicitud.description }}
+                                    </p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <span class="badge rounded-pill 
+                                            {% if solicitud.status == 'PENDING' %}bg-warning text-dark
+                                            {% elif solicitud.status == 'ACCEPTED' %}bg-info text-dark
+                                            {% elif solicitud.status == 'COMPLETED' %}bg-success
+                                            {% else %}bg-danger{% endif %}">
+                                            {{ solicitud.get_status_display }}
+                                        </span>
+                                        
+                                        <a href="{% url 'chat_solicitud' solicitud.id %}" class="btn btn-sm btn-light border rounded-pill shadow-sm">
+                                            Abrir chat
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="mb-3" style="font-size: 3.5rem;">📭</div>
+                            <h5 class="text-dark fw-bold">Aún no tienes solicitudes</h5>
+                            <p class="text-muted px-4">Cuando un cliente solicite tus servicios, aparecerán aquí automáticamente.</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </main>
