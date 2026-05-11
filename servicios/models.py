@@ -122,7 +122,9 @@ class JobRequest(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
     evidencia_foto = models.ImageField(upload_to='solicitudes/',null=True, blank=True,verbose_name="Foto del problema (Opcional)")
-
+    client_confirmation = models.CharField(max_length=20, null=True, blank=True)
+    worker_confirmation = models.CharField(max_length=20, null=True, blank=True)
+    
     def __str__(self):
         # Usamos el username de la relación con User para el nombre en el admin
         return f"Solicitud para {self.worker.user.username} de {self.client.user.username}"
