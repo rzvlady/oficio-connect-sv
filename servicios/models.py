@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models import Avg
 from django.core.exceptions import ValidationError
-# Create your models here.
+
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
@@ -28,10 +28,6 @@ class WorkerProfile(models.Model):
     def get_average_rating(self):
         result = self.reviews.aggregate(Avg('rating', default = 0))['rating__avg']
         return round(result, 2)  
-    #retorna el resultado redondeado a dos decimales
-        """el uso de "__" es parte de la convencion de nombres de django, se hace para no confundir con variables propias
-        si estuviera sumando usaria algo__sum. aggregate retorna un diccionaro, por eso se usa  ['rating__avg']
-        Es como si el nombre se asignara sobre la marcha. ['rating__avg'] es la key y lo que round(result, 1) el value"""
 
     def get_stars_number(self):
         rating = self.get_average_rating()
@@ -54,11 +50,8 @@ class WorkerProfile(models.Model):
             'half_stars': range(half_star),
             'empty_stars': range(empty_stars)
         }
-        """esta funcion permie que ne el front se puedan mostrar graficamente
-        calificaciones como '3 estrellas y la mitad de una' o sea, (3.5 estrellas o )"""
 
     def __str__(self):
-
         nombre = self.full_name if self.full_name else self.user.username
         if self.category:
             return f"{nombre} - {self.category.name}"
