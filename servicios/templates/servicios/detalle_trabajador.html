@@ -72,7 +72,7 @@
                         </p>
 
                         <div class="d-grid gap-3 col-md-8 mx-auto d-md-flex justify-content-center">
-                            <a href="#" class="btn btn-success btn-lg shadow-sm rounded-pill fw-semibold px-4">
+                            <a href="{% url 'solicitar_trabajo' trabajador.id %} "class="btn btn-success btn-lg shadow-sm rounded-pill fw-semibold px-4">
                                 Solicitar Servicio
                             </a>
                             <a href="{% url 'review_trabajador' worker_id=trabajador.id %}" class="btn btn-outline-primary btn-lg shadow-sm rounded-pill px-4">

@@ -14,12 +14,12 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
 class WorkerProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = "worker_profille")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = "worker_profile")
     full_name = models.CharField(max_length=250, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, related_name="workers", null=True, blank=True)
     bio = models.TextField(help_text="Breve descripción de su experiencia en el trabajo", null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
-    service_area = models.CharField(max_length=100, default="San Salvador")
+    service_area = models.CharField(max_length=100,)
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
 
     def total_reviews(self):
@@ -57,19 +57,20 @@ class WorkerProfile(models.Model):
         """esta funcion permie que ne el front se puedan mostrar graficamente
         calificaciones como '3 estrellas y la mitad de una' o sea, (3.5 estrellas o )"""
 
-def __str__(self):
+    def __str__(self):
 
         nombre = self.full_name if self.full_name else self.user.username
         if self.category:
             return f"{nombre} - {self.category.name}"
         
         return f"{nombre} - Sin categoría asignada"
+    
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client_profile")
     full_name = models.CharField(max_length=250, null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     address = models.CharField(max_length=255, help_text="Dirección para recibir el servicio", null=True, blank=True)
-    municipality = models.CharField(max_length=100, default="San Salvador", verbose_name="Municipio") #quitar eso total es solo en el AMSS
+    municipality = models.CharField(max_length=100, verbose_name="Municipio") #quitar eso total es solo en el AMSS
     profile_picture = models.ImageField(upload_to='clients/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -77,6 +78,7 @@ class ClientProfile(models.Model):
         if self.full_name:
             return f"Cliente: {self.full_name}"
         return f"Cliente: {self.user.username}"
+    
 class Review(models.Model):
     worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name="reviews")
     client = models.ForeignKey(ClientProfile, on_delete=models.CASCADE)
@@ -105,10 +107,7 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review de {self.worker.full_name} por {self.client.full_name}"
-
-from django.db import models
-from django.utils import timezone
-
+    
 class JobRequest(models.Model):
     STATUS_CHOICES = [
         ('PENDING', 'Pendiente'),
@@ -122,7 +121,10 @@ class JobRequest(models.Model):
     address_reference = models.CharField(max_length=255, verbose_name="Referencia de ubicación",blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
-
+    evidencia_foto = models.ImageField(upload_to='solicitudes/',null=True, blank=True,verbose_name="Foto del problema (Opcional)")
+    client_confirmation = models.CharField(max_length=20, null=True, blank=True)
+    worker_confirmation = models.CharField(max_length=20, null=True, blank=True)
+    
     def __str__(self):
         # Usamos el username de la relación con User para el nombre en el admin
         return f"Solicitud para {self.worker.user.username} de {self.client.user.username}"
@@ -130,3 +132,18 @@ class JobRequest(models.Model):
     class Meta:
         verbose_name = "Solicitud de Trabajo"
         verbose_name_plural = "Solicitudes de Trabajo"
+        ordering = ['-created_at']
+
+class Message(models.Model):
+    job_request = models.ForeignKey(JobRequest, on_delete=models.CASCADE, related_name='mensajes')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mensajes_enviados')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mensajes_recibidos')
+    content = models.TextField(verbose_name="Contenido del mensaje")
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return f"De {self.sender.username} para {self.receiver.username}"

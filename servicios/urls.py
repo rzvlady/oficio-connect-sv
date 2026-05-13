@@ -1,30 +1,22 @@
-from django.urls import path, include
+from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('review_trabajador/<int:worker_id>/', views.crear_resena, name='review_trabajador'), 
+    path('review_trabajador/<int:worker_id>/', views.crear_resena, name='review_trabajador'),
 
     path('explorar/', views.lista_categorias_cliente, name='explorar_categorias'),
 
     path('explorar/<int:categoria_id>/', views.trabajadores_por_categoria, name='trabajadores_categoria'),
 
-    path('trabajador/<int:trabajador_id>/', views.detalle_trabajador, name='detalle_trabajador')
+    path('trabajador/<int:trabajador_id>/', views.detalle_trabajador, name='detalle_trabajador'),
 
-    #path('categorias/', views.lista_categorias, name='lista_categorias'),
+    path('solicitar/<int:worker_id>/', views.solicitar_trabajo, name='solicitar_trabajo'),
+    
+    path('mis-solicitudes/', views.mis_solicitudes, name='mis_solicitudes'),
 
-    #path('categorias/crear/', views.crear_categoria, name = 'crear_categoria'), 
+    path('solicitud/<int:request_id>/chat/', views.chat_solicitud, name='chat_solicitud'),
 
-    #path('categorias/editar/<int:id>/', views.editar_categoria, name = 'editar_categoria'),
-
-    #path('categorias/eliminar/<int:id>', views.eliminar_categoria, name = 'eliminar_categoria'),
-
-    #path('workers/', views.lista_workers, name='lista_workers'),
-
-    #path('workers/crear/', views.crear_worker, name = 'crear_worker'), 
-
-    #path('workers/editar/<int:id>/', views.editar_worker, name = 'editar_worker'),
-
-    #path('workers/eliminar/<int:id>', views.eliminar_worker, name = 'eliminar_worker'), 
+    path('solicitud/<int:solicitud_id>/cambiar-estado/', views.cambiar_estado_solicitud, name='cambiar_estado_solicitud'),
 
 ]
 
